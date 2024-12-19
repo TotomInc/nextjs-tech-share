@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "postgresql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+// Not tied to a user, only for demonstration purposes on the landing page.
+model PricingPlan {
+  id           String   @id(map: "PK_PricingPlan") @default(uuid()) @db.Uuid
+  popular      Boolean  @default(false)
+  name         String   @db.VarChar(255)
+  description  String   @db.VarChar(255)
+  price        Float    @db.Real
+  maxInvoices  Int      @db.SmallInt
+  maxUsers     Int      @db.SmallInt
+  maxCustomers Int      @db.SmallInt
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now()) @updatedAt
+}
+
+model User {
+  id        String    @id(map: "PK_User") @default(uuid()) @db.Uuid
+  name      String    @db.VarChar(64)
+  email     String    @unique @db.VarChar(255)
+  password  String    @db.VarChar(255)
+  invoices  Invoice[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
+
+  @@index([email], name: "IX_User_email")
+}
+
+model Invoice {
+  id            String   @id(map: "PK_Invoice") @default(uuid()) @db.Uuid
+  userId        String   @db.Uuid
+  name          String   @db.VarChar(255)
+  amount        Float    @db.Real
+  customerName  String   @db.VarChar(64)
+  customerEmail String   @db.VarChar(255)
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now()) @updatedAt
+
+  // Custom indexes to improve query performance.
+  @@index([userId], name: "IX_Invoice_user")
+  @@index([customerEmail], name: "IX_Invoice_customerEmail")
+}
