@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Geist", "Geist Fallback", "Inter", sans-serif;
+  --font-mono: "Geist", "Geist Fallback";
+
+  --text-color-primary: var(--color-zinc-900);
+  --text-color-secondary: var(--color-zinc-600);
+  --text-color-tertiary: var(--color-zinc-500);
+
+  --border-color-default: var(--color-zinc-200);
+}
